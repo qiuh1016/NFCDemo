@@ -3,6 +3,7 @@
     package="com.cetcme.nfcdemo">
     
     <uses-permission android:name="android.permission.NFC" />
+    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -15,8 +16,16 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:mimeType="text/plain" />
+
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@layout/activity_main" />
         </activity>
     </application>
 
