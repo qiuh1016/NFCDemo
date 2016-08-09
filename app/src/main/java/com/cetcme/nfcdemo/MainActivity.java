@@ -1,24 +1,34 @@
 package com.cetcme.nfcdemo;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
+import android.nfc.tech.NfcF;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private NfcAdapter nfcAdapter;
     private String readResult;
     private TextView textView;
+
+    private String[][] techListArray;
+    private PendingIntent pendingIntent;
+    private IntentFilter[] intentFilersArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +37,36 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView) findViewById(R.id.textView);
 
+
+
+        Intent nfcIntent = new Intent(this, getClass());
+        nfcIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        pendingIntent = PendingIntent.getActivity(this, 0, nfcIntent, 0);
+
+        IntentFilter tagIntentFilter = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            tagIntentFilter.addDataType("text/plain");
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+        /*
         nfcCheck();
 
+        //创建一个PendingIntent对象，以便Android系统能够在扫描到NFC标签时用它来封装NFC标签的详细信息
+        pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        //声明想要截获处理的Intent对象的Intent过滤器
+        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            ndef.addDataType("");
+        } catch (IntentFilter.MalformedMimeTypeException e) {
+            throw new RuntimeException("fail", e);
+        }
+        //建立一个应用程序希望处理的NFC标签技术数组
+        techListArray = new String[][] {new String[] {NfcF.class.getName()}};
+        */
+
+        nfcCheck();
     }
 
     private void nfcCheck() {
@@ -45,13 +83,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-//            readFromTag(getIntent());
-            processIntent(getIntent());
+//        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+////            readFromTag(getIntent());
+//            processIntent(getIntent());
+//        }
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFilersArray, null);
+
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        Log.i("Main", "New Intent");
+        textView.setText("new Intent");
+        getTag(intent);
+    }
+
+    private void getTag(Intent i) {
+        if (i == null) {
+            return;
+        }
+
+        String type = i.getType();
+        String action = i.getAction();
+        List dataList = new ArrayList();
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+            Log.i("Main", "Action Tag Found");
+//            readFromTag(i);
+            processIntent(i);
         }
     }
+
+//    private b
 
     private boolean readFromTag(Intent intent){
         Parcelable[] rawArray = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -95,6 +166,9 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(tech);
         }
         boolean auth = false;
+
+        Log.i("Main", "****id: " + intent.getParcelableExtra(NfcAdapter.EXTRA_ID).toString());
+
         //读取TAG
         MifareClassic mfc = MifareClassic.get(tagFromIntent);
         try {
