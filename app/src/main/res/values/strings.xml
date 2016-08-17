@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">NFCDemo</string>
+    <string name="app_name">数字船检</string>
+    <string name="app_name2">图片截取</string>
+    <string name="running_face_detection">请稍候...</string>
+    <string name="saving_image">正在保存照片...</string>
+    <string name="action_settings">Settings</string>
+    <string name="username">用户代码：</string>
+    <string name="password">用户密码：</string>
+    <string name="unit">使用单位：</string>
+    <string name="cheak">开始查验</string>
+    <string name="info">请将卡片靠近手机</string>
+    <string name="notice">请将相机中间的扫描窗口对准二维码图片. 扫描过程中需要自动对焦,请尽量保持平稳.</string>
+    <string name="scan">开始扫描</string>
+    <string name="boatcheack">船舶检验</string>
+    <string name="boatsecurty">港监检查</string>
+    <string name="boatexecutelaw">渔政检查</string>
+    <string name="boatinsure">承保勘查</string>
+    <string name="title_activity_digitization_boat_check">渔船手持业务终端</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_check_initial_survey_b">CheckInitialSurveyB</string>
 </resources>
