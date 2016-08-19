@@ -1,0 +1,4 @@
+此Key是在生成signed apk时候需要用到的，也可以另外新建：
+Key store password: 12345678
+Key alias: NFCDemoKey
+Key password: 12345678
